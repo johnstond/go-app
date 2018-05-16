@@ -45,8 +45,19 @@ type templateParams struct {
 }
 
 func main() {
-	http.HandleFunc("/", indexHandler)
-	appengine.Main()
+    // Limit the use of this app on a local server
+    if appengine.IsDevAppServer() {
+        // go to the default handler 
+        http.HandleFunc("/", indexHandler)
+        appengine.Main()
+    } else {
+        http.HandleFunc("/", devLimitHandler)
+    }
+}
+
+func devLimitHandler(w http.ResponseWriter, r *http.Request)  {
+    
+    fmt.Fprintf(wa, "IsDevAppServer: %v. /n You can not run this app in public. ", appengine.IsDevAppServer())
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
